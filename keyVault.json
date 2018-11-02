@@ -2,25 +2,18 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "keyVaultResourceGroup": {
-      "type": "string"
-    },
-      
-      "keyVaultName":{
+        "keyVaultName":{
             "type": "string"
-        },
-        "keyvaulttags":{
-            "type": "object"
         },
         "objectId":{
             "type": "object"
         },
-        "VM-Admin-Password":{
+        "servicePrincipalClientSecret":{
             "type":"securestring" 
         }
     },
     "variables": {
-        "secretName": "VM-Admin-Password"
+        "secretName": "servicePrincipalClientSecret"
     },
     "resources":[
         {
@@ -28,9 +21,7 @@
             "name": "[parameters('keyVaultName')]",
             "apiVersion": "2015-06-01",
             "location": "[resourceGroup().location]",
-            "tags": {
-                "[parameters('keyvaulttags').key1]": "[parameters('keyvaulttags').value1]"
-            },
+            "tags": {},
             "properties": {
               "enabledForDeployment": true,
               "enabledForTemplateDeployment": true,
@@ -56,9 +47,9 @@
                 "type": "secrets",
                 "name": "[variables('secretName')]",
                 "apiVersion": "2015-06-01",
-                "tags": { "displayName": "secret" },
+                "tags": {},
                 "properties": {
-                  "value": "[parameters('VM-Admin-Password')]"
+                  "value": "[parameters('servicePrincipalClientSecret')]"
                 },
                 "dependsOn": [
                   "[concat('Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]"
@@ -66,3 +57,5 @@
               }
             ]
         }
+    ]    
+}    
