@@ -24,7 +24,7 @@
             "type": "Microsoft.OperationalInsights/workspaces",
             "name": "[parameters('workspaceName')]",
             "apiVersion": "2015-11-01-preview",
-            "location": "[resourceGroup().location]",
+            "location": "Westeurope",
             "properties": {
                 "sku": {
                     "name": "[parameters('sku')]"
