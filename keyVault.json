@@ -6,7 +6,7 @@
             "type": "string"
         },
         "objectId":{
-            "type": "object"
+            "type": "string"
         },
         "servicePrincipalClientSecret":{
             "type":"securestring" 
