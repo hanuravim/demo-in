@@ -20,15 +20,6 @@
         "sku":{
             "type":"string" 
         },
-        "VNET RG Name":{
-            "type":"string" 
-        },
-        "VNET Name":{
-            "type":"string" 
-        },
-        "Subnet Name":{
-            "type":"string" 
-        },
         "_artifactsLocation": {
             "type": "string",
             "defaultValue": "https://raw.githubusercontent.com/hanuravim/demo-in/master/"
