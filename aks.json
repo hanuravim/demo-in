@@ -1,0 +1,119 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "keyVaultName":{
+            "type": "string"
+        },
+        "objectId":{
+            "type": "string"
+        },
+       
+        "workspaceName":{
+            "type":"string" 
+        },
+        "workspaceRegion":{
+            "type": "string"
+        },
+        "sku":{
+            "type":"string" 
+        },
+        "VNET RG Name":{
+            "type":"string" 
+        },
+        "VNET Name":{
+            "type":"string" 
+        },
+        "Subnet Name":{
+            "type":"string" 
+        },
+        "_artifactsLocation": {
+            "type": "string",
+            "defaultValue": "https://raw.githubusercontent.com/hanuravim/demo-in/master/"
+        }
+       
+    },
+    "variables": {
+        "configuration":{
+            "keyVault":"[concat(parameters('_artifactsLocation'),'keyVault.json')]",
+            "OMS":"[concat(parameters('_artifactsLocation'),'OMS.json')]"
+        },
+        "Network Contributor Role": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '4d97b98b-1d4f-4787-a291-c67834d212e7')]",
+        "Role Assignment Name": "[concat(parameters('VNET Name'), '/Microsoft.Authorization/', guid(concat(resourceGroup().id), variables('Network Contributor Role')))]"
+    },
+    "resources": [
+        {
+            "apiVersion": "2018-05-01",
+            "name": "keyvault",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('configuration').keyVault]"
+                },
+                "parameters": {
+                    "keyVaultName": {
+                        "value": "[parameters('keyVaultName')]"
+                    },
+                    "objectId": {
+                        "value": "[parameters('objectId')]"
+                    }
+                   
+                }
+            }
+        },
+        {
+            "apiVersion": "2018-05-01",
+            "name": "OMS",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('configuration').OMS]"
+                },
+                "parameters": {
+                    "workspaceName": {
+                        "value": "[parameters('workspaceName')]"
+                    },
+                    "workspaceRegion":{
+                        "value": "[parameters('workspaceRegion')]"
+                    },
+                    "sku": {
+                        "value": "[parameters('sku')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "ClusterSubnetRoleAssignmentDeployment",
+            "apiVersion": "2017-05-10",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "type": "Microsoft.Network/virtualNetworks/subnets/providers/roleAssignments",
+                            "apiVersion": "2017-05-01",
+                            "name": "[variables('Role Assignment Name')]",
+                            "properties": {
+                                "roleDefinitionId": "[variables('Network Contributor Role')]",
+                                "principalId": "[parameters('objectId')]",
+                                "scope": "[concat('/subscriptions/', subscription().subscriptionId, parameters('VNET Name'), '/', parameters('Subnet Name'))]"
+                                         
+                            }
+                        }
+                    ]
+                }
+            },
+            "dependsOn": []
+        }
+    ],
+    "outputs": {}
+}
