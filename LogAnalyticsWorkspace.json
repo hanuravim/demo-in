@@ -2,13 +2,13 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "workspaceName":{
+        "workspaceName": {
             "type": "string"
         },
-        "workspaceRegion":{
+        "workspaceRegion": {
             "type": "string"
         },
-        "sku":{
+        "loganalyticSKU": {
             "type": "string",
             "allowedValues": [
                 "PerNode",
@@ -27,10 +27,10 @@
             "type": "Microsoft.OperationalInsights/workspaces",
             "name": "[parameters('workspaceName')]",
             "apiVersion": "2015-11-01-preview",
-            "location": "Westeurope",
+            "location": "[parameters('workspaceRegion')]",
             "properties": {
                 "sku": {
-                    "name": "[parameters('sku')]"
+                    "name": "[parameters('loganalyticSKU')]"
                 },
                 "features": {
                     "searchVersion": 1
